@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,7 +20,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import ro.ase.ie.g1097.model.Movie;
 import ro.ase.ie.g1097.R;
@@ -29,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
     protected static final String POSITION_EXTRA = "position";
     protected static final String MOVIE_EXTRA = "movie";
     private FloatingActionButton fabInsert;
-    private ListView listView;
+    private ListView lvMovies;
     private ActivityResultLauncher<Intent> launcher;
+    private final ArrayList<Movie> movies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        addSampleMovies();
 
         initControls();
         initListeners();
@@ -68,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvMovies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
@@ -80,8 +87,47 @@ public class MainActivity extends AppCompatActivity {
 
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
-        listView = findViewById(R.id.listView);
+        lvMovies = findViewById(R.id.listView);
     }
+
+    private void addSampleMovies() {
+        movies.add(new Movie(
+                "Inception",
+                new GregorianCalendar(2010, Calendar.JULY, 16).getTime(),
+                "Sci-Fi",
+                160000000,
+                148,
+                4.5f,
+                true,
+                "PG-13",
+                false,
+                "https://example.com/posters/inception.jpg"));
+
+        movies.add(new Movie(
+                "Toy Story",
+                new GregorianCalendar(1995, Calendar.NOVEMBER, 22).getTime(),
+                "Animation",
+                30000000,
+                81,
+                4f,
+                true,
+                "G",
+                false,
+                "https://example.com/posters/toy-story.jpg"));
+
+        movies.add(new Movie(
+                "The Matrix",
+                new GregorianCalendar(1999, Calendar.MARCH, 31).getTime(),
+                "Action",
+                63000000,
+                136,
+                5f,
+                false,
+                "R",
+                true,
+                "https://example.com/posters/the-matrix.jpg"));
+    }
+
 }
 
 

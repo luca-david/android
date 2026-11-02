@@ -57,6 +57,7 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     private void initControls() {
+
         etRelease = findViewById(R.id.etRelease);
     }
 
