@@ -19,7 +19,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import ro.ase.ie.g1099.R;
+import ro.ase.ie.g1099.model.Movie;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabInsert;
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
+    private final ArrayList<Movie> movies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,5 +84,43 @@ public class MainActivity extends AppCompatActivity {
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
         listView = findViewById(R.id.listView);
+    }
+
+    private void addSampleMovies() {
+        movies.add(new Movie(
+                "Inception",
+                new GregorianCalendar(2010, Calendar.JULY, 16).getTime(),
+                "Sci-Fi",
+                160000000,
+                148,
+                4.5f,
+                true,
+                "PG-13",
+                false,
+                "https://example.com/posters/inception.jpg"));
+
+        movies.add(new Movie(
+                "Toy Story",
+                new GregorianCalendar(1995, Calendar.NOVEMBER, 22).getTime(),
+                "Animation",
+                30000000,
+                81,
+                4f,
+                true,
+                "G",
+                false,
+                "https://example.com/posters/toy-story.jpg"));
+
+        movies.add(new Movie(
+                "The Matrix",
+                new GregorianCalendar(1999, Calendar.MARCH, 31).getTime(),
+                "Action",
+                63000000,
+                136,
+                5f,
+                false,
+                "R",
+                true,
+                "https://example.com/posters/the-matrix.jpg"));
     }
 }
