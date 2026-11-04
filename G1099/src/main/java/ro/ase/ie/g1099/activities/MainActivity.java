@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import ro.ase.ie.g1099.R;
 import ro.ase.ie.g1099.model.Movie;
@@ -35,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabInsert;
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
-    private final ArrayList<Movie> movies = new ArrayList<>();
-    private ArrayAdapter<Movie> movieArrayAdapter;
+    private final List<Movie> movies = new ArrayList<>();
+    private ArrayAdapter<Movie> movieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         addSampleMovies();
 
-        movieArrayAdapter = new ArrayAdapter<>(MainActivity.this,
-                                                android.R.layout.simple_list_item_1,
-                                                movies);
-
+        movieAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, movies);
         initControls();
         initListeners();
 
@@ -65,7 +63,18 @@ public class MainActivity extends AppCompatActivity {
                         if(o.getResultCode() == RESULT_OK)
                         {
                             Intent intent = o.getData();
-                            Toast.makeText(MainActivity.this, "response", Toast.LENGTH_SHORT).show();
+                            Movie movie = (Movie) intent.getSerializableExtra(MOVIE_EXTRA);
+                            int position = intent.getIntExtra(POSITION_EXTRA, -1);
+                            if(position == -1)
+                            {
+                                movies.add(movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
+                            else
+                            {
+                                movies.set(position, movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 });
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
                 intent.putExtra(MOVIE_EXTRA, movies.get(position));
+                intent.putExtra(POSITION_EXTRA, position);
                 launcher.launch(intent);
             }
         });
@@ -93,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
         listView = findViewById(R.id.listView);
-        listView.setAdapter(movieArrayAdapter);
+        listView.setAdapter(movieAdapter);
     }
 
     private void addSampleMovies() {

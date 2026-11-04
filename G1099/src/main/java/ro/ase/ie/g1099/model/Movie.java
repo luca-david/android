@@ -15,6 +15,9 @@ public class Movie implements Serializable {
     private boolean onWatchlist; //Checkbox
     private String posterUrl;
 
+    public Movie() {
+    }
+
     public Movie(String title, Date release, String genre, double budget, int duration, float rating, boolean watched, String approval, boolean onWatchlist, String posterUrl) {
         this.title = title;
         this.release = release;
