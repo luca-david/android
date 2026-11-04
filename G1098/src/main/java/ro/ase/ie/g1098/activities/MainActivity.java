@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
     private final List<Movie> movies = new ArrayList<>();
+    private ArrayAdapter<Movie> movieAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         addSampleMovies();
 
+        movieAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, movies);
         initControls();
         initListeners();
 
@@ -58,7 +62,18 @@ public class MainActivity extends AppCompatActivity {
                         if(o.getResultCode() == RESULT_OK)
                         {
                             Intent intent = o.getData();
-                            Toast.makeText(MainActivity.this, "response", Toast.LENGTH_SHORT).show();
+                            Movie movie = (Movie) intent.getSerializableExtra(MOVIE_EXTRA);
+                            int position = intent.getIntExtra(POSITION_EXTRA, -1);
+                            if(position == -1)
+                            {
+                                movies.add(movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
+                            else
+                            {
+                                movies.set(position, movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 });
@@ -77,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-//                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
+                intent.putExtra(MOVIE_EXTRA, movies.get(position));
+                intent.putExtra(POSITION_EXTRA, position);
                 launcher.launch(intent);
             }
         });
@@ -86,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
         listView = findViewById(R.id.listView);
+        listView.setAdapter(movieAdapter);
     }
 
     private void addSampleMovies() {
