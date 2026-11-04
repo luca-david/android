@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import ro.ase.ie.g1097.model.Movie;
 import ro.ase.ie.g1097.R;
@@ -33,9 +34,10 @@ public class MainActivity extends AppCompatActivity {
     protected static final String POSITION_EXTRA = "position";
     protected static final String MOVIE_EXTRA = "movie";
     private FloatingActionButton fabInsert;
-    private ListView lvMovies;
+    private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
-    private final ArrayList<Movie> movies = new ArrayList<>();
+    private final List<Movie> movies = new ArrayList<>();
+    private ArrayAdapter<Movie> movieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         addSampleMovies();
 
+        movieAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, movies);
         initControls();
         initListeners();
 
@@ -60,7 +63,18 @@ public class MainActivity extends AppCompatActivity {
                         if(o.getResultCode() == RESULT_OK)
                         {
                             Intent intent = o.getData();
-                            Toast.makeText(MainActivity.this, "response", Toast.LENGTH_SHORT).show();
+                            Movie movie = (Movie) intent.getSerializableExtra(MOVIE_EXTRA);
+                            int position = intent.getIntExtra(POSITION_EXTRA, -1);
+                            if(position == -1)
+                            {
+                                movies.add(movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
+                            else
+                            {
+                                movies.set(position, movie);
+                                movieAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 });
@@ -75,11 +89,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        lvMovies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-//                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
+                intent.putExtra(MOVIE_EXTRA, movies.get(position));
+                intent.putExtra(POSITION_EXTRA, position);
                 launcher.launch(intent);
             }
         });
@@ -87,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
-        lvMovies = findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
+        listView.setAdapter(movieAdapter);
     }
 
     private void addSampleMovies() {
@@ -127,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 true,
                 "https://example.com/posters/the-matrix.jpg"));
     }
-
 }
 
 

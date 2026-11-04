@@ -5,16 +5,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RatingBar;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
@@ -23,11 +35,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import ro.ase.ie.g1097.R;
+import ro.ase.ie.g1097.databinding.ActivityItemBinding;
 import ro.ase.ie.g1097.model.Movie;
 
 public class ItemActivity extends AppCompatActivity {
 
+    private EditText etTitle;
     private EditText etRelease;
+    private Spinner spGenre;
+    private EditText etBudget;
+    private SeekBar sbDuration;
+    private RatingBar rbRating;
+    private RadioGroup rgApproval;
+    private CheckBox cbonWatchList;
+    private MaterialSwitch swWatched;
+    private EditText etPoster;
+    private Button btMovieAction;
+    private TextView tvDurationValue;
+    private TextView tvWatchedValue;
+
     private int position = -1;   // -1 = insert mode
     private Calendar releaseCal = Calendar.getInstance();
     private final SimpleDateFormat dateFormat =
@@ -51,14 +77,55 @@ public class ItemActivity extends AppCompatActivity {
         Movie existing = IntentCompat.getSerializableExtra(intent, MainActivity.MOVIE_EXTRA, Movie.class);
         if (existing != null) {
             position = intent.getIntExtra(MainActivity.POSITION_EXTRA, -1);
-            //fillForm(existing);
+            fillForm(existing);
             setTitle("Edit movie");
+            btMovieAction.setText("Update Movie");
+        }
+    }
+
+    private void fillForm(Movie existing) {
+        etTitle.setText(existing.getTitle());
+        etRelease.setText(dateFormat.format(existing.getRelease()));
+        etBudget.setText(String.valueOf(existing.getBudget()));
+        sbDuration.setProgress(existing.getDuration());
+        cbonWatchList.setChecked(existing.isOnWatchlist());
+        swWatched.setChecked(existing.isWatched());
+        rbRating.setRating(existing.getRating());
+        etPoster.setText(existing.getPoster());
+        for(int index=0; index<spGenre.getCount(); index++)
+        {
+            if(spGenre.getItemAtPosition(index).equals(existing.getGenre()))
+            {
+                spGenre.setSelection(index);
+                break;
+            }
+        }
+        for(int index=0; index<rgApproval.getChildCount(); index++)
+        {
+            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
+            if(rb.getText().toString().equals(existing.getApproval()))
+            {
+                rgApproval.check(rgApproval.getChildAt(index).getId());
+                break;
+            }
         }
     }
 
     private void initControls() {
 
+        etTitle = findViewById(R.id.etTitle);
         etRelease = findViewById(R.id.etRelease);
+        spGenre = findViewById(R.id.spGenre);
+        etBudget = findViewById(R.id.etBudget);
+        sbDuration = findViewById(R.id.sbDuration);
+        rbRating = findViewById(R.id.rbRating);
+        rgApproval = findViewById(R.id.rgApproval);
+        cbonWatchList = findViewById(R.id.cbOnWatchList);
+        swWatched = findViewById(R.id.swWatched);
+        etPoster = findViewById(R.id.etPoster);
+        btMovieAction = findViewById(R.id.btnMovieAction);
+        tvDurationValue = findViewById(R.id.tvDurationValue);
+        tvWatchedValue = findViewById(R.id.tvWatchedValue);
     }
 
     private void initListeners() {
@@ -68,6 +135,62 @@ public class ItemActivity extends AppCompatActivity {
                 showReleaseDatePicker();
             }
         });
+        btMovieAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveMovie();
+            }
+        });
+        swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
+                tvWatchedValue.setText(isChecked ? "Yes" : "No");
+            }
+        });
+        sbDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvDurationValue.setText(progress + " min.");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    private void saveMovie() {
+        Movie movie = new Movie();
+        movie.setTitle(etTitle.getText().toString());
+        movie.setRelease(releaseCal.getTime());
+        movie.setGenre(spGenre.getSelectedItem().toString());
+        movie.setBudget(Double.parseDouble(etBudget.getText().toString()));
+        movie.setDuration(sbDuration.getProgress());
+        movie.setRating(rbRating.getRating());
+        movie.setWatched(swWatched.isChecked());
+        movie.setOnWatchlist(cbonWatchList.isChecked());
+        movie.setPoster(etPoster.getText().toString());
+        for(int index=0; index<rgApproval.getChildCount(); index++)
+        {
+            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
+            if(rb.isChecked())
+            {
+                movie.setApproval(rb.getText().toString());
+                break;
+            }
+        }
+        Intent intent = new Intent();
+        intent.putExtra(MainActivity.MOVIE_EXTRA, movie);
+        if (position != -1)
+            intent.putExtra(MainActivity.POSITION_EXTRA, position);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void showReleaseDatePicker() {
