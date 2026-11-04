@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import ro.ase.ie.g1099.R;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
     private final ArrayList<Movie> movies = new ArrayList<>();
+    private ArrayAdapter<Movie> movieArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        addSampleMovies();
+
+        movieArrayAdapter = new ArrayAdapter<>(MainActivity.this,
+                                                android.R.layout.simple_list_item_1,
+                                                movies);
 
         initControls();
         initListeners();
@@ -75,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-//                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
+                intent.putExtra(MOVIE_EXTRA, movies.get(position));
                 launcher.launch(intent);
             }
         });
@@ -84,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
         listView = findViewById(R.id.listView);
+        listView.setAdapter(movieArrayAdapter);
     }
 
     private void addSampleMovies() {
