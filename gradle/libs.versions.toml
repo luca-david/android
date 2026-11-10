@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.4.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -8,6 +8,12 @@ material = "1.14.0"
 activityKtx = "1.13.0"
 constraintlayout = "2.2.2"
 coordinatorlayout = "1.3.0"
+recyclerview = "1.4.0"
+room = "2.6.1"
+workRuntime = "2.12.0"
+annotation = "1.11.0"
+retrofit = "2.11.0"
+converterGson = "2.11.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -18,7 +24,14 @@ material = { group = "com.google.android.material", name = "material", version.r
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "workRuntime" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

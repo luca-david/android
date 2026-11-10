@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DMA07 — Async examples"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp" />
+
+        <Button android:id="@+id/btnThread"   android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1 · Raw Thread + runOnUiThread" />
+        <Button android:id="@+id/btnHandler"  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="2 · Handler + Looper" />
+        <Button android:id="@+id/btnExecutor" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="3 · ExecutorService (thread pool)" />
+        <Button android:id="@+id/btnExport"   android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4 · Background file export" />
+        <Button android:id="@+id/btnWork"     android:layout_width="match_parent" android:layout_height="wrap_content" android:text="5 · WorkManager periodic sync" />
+        <Button android:id="@+id/btnImage"    android:layout_width="match_parent" android:layout_height="wrap_content" android:text="6 · Image from URL (Glide)" />
+        <Button android:id="@+id/btnProblems" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="7 · Problems with raw threads (broken vs fixed)" />
+    </LinearLayout>
+</ScrollView>

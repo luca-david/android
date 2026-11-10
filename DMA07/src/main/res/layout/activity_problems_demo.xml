@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Problems with raw threads — broken vs fixed" android:textStyle="bold" android:textSize="18sp" />
+
+        <!-- P1 -->
+        <TextView style="@style/ProblemHeader" android:text="1 · Unbounded creation (threads are expensive)" />
+        <LinearLayout style="@style/RowOfTwo">
+            <Button android:id="@+id/btnP1Broken" style="@style/HalfBtn" android:text="Broken: 200 raw threads" />
+            <Button android:id="@+id/btnP1Fixed"  style="@style/HalfBtn" android:text="Fixed: pool of 4" />
+        </LinearLayout>
+
+        <!-- P2 -->
+        <TextView style="@style/ProblemHeader" android:text="2 · Hard to cancel (keeps running after exit)" />
+        <LinearLayout style="@style/RowOfTwo">
+            <Button android:id="@+id/btnP2StartBroken" style="@style/HalfBtn" android:text="Start broken" />
+            <Button android:id="@+id/btnP2StopBroken"  style="@style/HalfBtn" android:text="Stop broken" />
+        </LinearLayout>
+        <LinearLayout style="@style/RowOfTwo">
+            <Button android:id="@+id/btnP2StartFixed" style="@style/HalfBtn" android:text="Start fixed" />
+            <Button android:id="@+id/btnP2StopFixed"  style="@style/HalfBtn" android:text="Stop fixed" />
+        </LinearLayout>
+
+        <!-- P3 -->
+        <TextView style="@style/ProblemHeader" android:text="3 · Memory leak (lambda holds the Activity)" />
+        <LinearLayout style="@style/RowOfTwo">
+            <Button android:id="@+id/btnP3Broken" style="@style/HalfBtn" android:text="Broken: leaky callback" />
+            <Button android:id="@+id/btnP3Fixed"  style="@style/HalfBtn" android:text="Fixed: WeakReference" />
+        </LinearLayout>
+
+        <!-- P4 -->
+        <TextView style="@style/ProblemHeader" android:text="4 · Result for a dead Activity (rotation)" />
+        <LinearLayout style="@style/RowOfTwo">
+            <Button android:id="@+id/btnP4Broken" style="@style/HalfBtn" android:text="Broken: raw thread" />
+            <Button android:id="@+id/btnP4Fixed"  style="@style/HalfBtn" android:text="Fixed: ViewModel" />
+        </LinearLayout>
+        <TextView android:id="@+id/tvRotationResult" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:text="(rotation result appears here)" android:textStyle="italic" />
+
+        <!-- Log -->
+        <TextView style="@style/ProblemHeader" android:text="Log (also in Logcat, tag DMA07)" />
+        <TextView android:id="@+id/tvLog" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fontFamily="monospace" android:textSize="13sp" android:background="#11000000" android:padding="8dp" />
+    </LinearLayout>
+</ScrollView>
