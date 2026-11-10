@@ -8,11 +8,10 @@
     android:orientation="horizontal"
     tools:context=".activities.MainActivity">
 
-    <ListView
-        android:id="@+id/listView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMovies"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:entries="@array/items" />
+        android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
