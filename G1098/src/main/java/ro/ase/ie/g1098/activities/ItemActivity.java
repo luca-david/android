@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -14,10 +13,9 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Switch;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
@@ -37,24 +35,24 @@ import ro.ase.ie.g1098.model.Movie;
 
 public class ItemActivity extends AppCompatActivity {
 
-    private EditText etTitle;
     private EditText etRelease;
-    private Spinner spGenre;
-    private EditText etBudget;
-    private SeekBar sbDuration;
-    private RatingBar rbRating;
-    private RadioGroup rgApproval;
-    private CheckBox cbonWatchList;
-    private MaterialSwitch swWatched;
-    private EditText etPoster;
-    private Button btMovieAction;
-    private TextView tvDurationValue;
-    private TextView tvWatchedValue;
-
     private int position = -1;   // -1 = insert mode
     private Calendar releaseCal = Calendar.getInstance();
     private final SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+    // we need to create variables of all fields
+    private EditText etTitle;
+    private Spinner spGenre;
+    private EditText etBudget;
+    private SeekBar sbDuration;
+    private RatingBar rbRating;
+    private MaterialSwitch swWatched;
+    private CheckBox cbWatchlist;
+    private RadioGroup rgApproval;
+    private EditText etPoster;
+    private Button btnMovieAction;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,39 +74,44 @@ public class ItemActivity extends AppCompatActivity {
             position = intent.getIntExtra(MainActivity.POSITION_EXTRA, -1);
             fillForm(existing);
             setTitle("Edit movie");
-            btMovieAction.setText("Update Movie");
         }
     }
 
     private void fillForm(Movie existing) {
+        //1. get data from existing object
+        //2. put its attributes inside the form fields
         etTitle.setText(existing.getTitle());
-        etRelease.setText(dateFormat.format(existing.getRelease()));
         etBudget.setText(String.valueOf(existing.getBudget()));
+        //etRelease.setText(dateFormat.format(existing.getRelease()));
         sbDuration.setProgress(existing.getDuration());
-        cbonWatchList.setChecked(existing.isOnWatchlist());
-        swWatched.setChecked(existing.isWatched());
         rbRating.setRating(existing.getRating());
-        etPoster.setText(existing.getPosterUrl());
-        for(int index=0; index<spGenre.getCount(); index++)
-        {
-            if(spGenre.getItemAtPosition(index).equals(existing.getGenre()))
-            {
-                spGenre.setSelection(index);
-                break;
+        swWatched.setChecked(existing.isWatched());
+        cbWatchlist.setChecked(existing.isOnWatchlist());
+        if (existing.getRelease() != null) {
+            releaseCal.setTime(existing.getRelease());
+            etRelease.setText(dateFormat.format(existing.getRelease()));
+        }
+
+        //setting the spinner
+        for (int i = 0; i < spGenre.getCount(); i++) {
+            //we can get via child if we use adapter
+            String genre = spGenre.getItemAtPosition(i).toString();
+            if (genre.equalsIgnoreCase(existing.getGenre())) {
+                spGenre.setSelection(i);
             }
         }
-        for(int index=0; index<rgApproval.getChildCount(); index++)
-        {
-            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
-            if(rb.getText().toString().equals(existing.getApproval()))
-            {
-                rgApproval.check(rgApproval.getChildAt(index).getId());
-                break;
+
+        //setting the RadioGroup
+        for (int i = 0; i < rgApproval.getChildCount(); i++) {
+            RadioButton rb = (RadioButton) rgApproval.getChildAt(i);
+            if (rb.getText().toString().equalsIgnoreCase(existing.getApproval())) {
+                rb.setChecked(true);
             }
         }
     }
 
     private void initControls() {
+        // we need to initialize the variables
 
         etTitle = findViewById(R.id.etTitle);
         etRelease = findViewById(R.id.etRelease);
@@ -116,13 +119,11 @@ public class ItemActivity extends AppCompatActivity {
         etBudget = findViewById(R.id.etBudget);
         sbDuration = findViewById(R.id.sbDuration);
         rbRating = findViewById(R.id.rbRating);
-        rgApproval = findViewById(R.id.rgApproval);
-        cbonWatchList = findViewById(R.id.cbOnWatchList);
         swWatched = findViewById(R.id.swWatched);
+        rgApproval = findViewById(R.id.rgApproval);
+        cbWatchlist = findViewById(R.id.cbOnWatchList);
         etPoster = findViewById(R.id.etPoster);
-        btMovieAction = findViewById(R.id.btnMovieAction);
-        tvDurationValue = findViewById(R.id.tvDurationValue);
-        tvWatchedValue = findViewById(R.id.tvWatchedValue);
+        btnMovieAction = findViewById(R.id.btnMovieAction);
     }
 
     private void initListeners() {
@@ -132,60 +133,51 @@ public class ItemActivity extends AppCompatActivity {
                 showReleaseDatePicker();
             }
         });
-        btMovieAction.setOnClickListener(new View.OnClickListener() {
+
+        btnMovieAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveMovie();
             }
         });
-        swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-                tvWatchedValue.setText(isChecked ? "Yes" : "No");
-            }
-        });
-        sbDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tvDurationValue.setText(progress + " min.");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
     }
 
     private void saveMovie() {
-        Movie movie = new Movie();
-        movie.setTitle(etTitle.getText().toString());
-        movie.setRelease(releaseCal.getTime());
-        movie.setGenre(spGenre.getSelectedItem().toString());
-        movie.setBudget(Double.parseDouble(etBudget.getText().toString()));
-        movie.setDuration(sbDuration.getProgress());
-        movie.setRating(rbRating.getRating());
-        movie.setWatched(swWatched.isChecked());
-        movie.setOnWatchlist(cbonWatchList.isChecked());
-        movie.setPosterUrl(etPoster.getText().toString());
-        for(int index=0; index<rgApproval.getChildCount(); index++)
-        {
-            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
-            if(rb.isChecked())
-            {
-                movie.setApproval(rb.getText().toString());
-                break;
-            }
+        //this is where we define the method
+
+        //1. extract values from form controls
+        String title = etTitle.getText().toString().trim();
+        Date releaseDate = releaseCal.getTime();
+        String genre = (String) spGenre.getSelectedItem();
+        long budget=  0;
+        try {
+            budget = Long.parseLong(etBudget.getText().toString().trim());
+        } catch (NumberFormatException ignored) {
+
         }
+        int duration = sbDuration.getProgress();
+        float rating = rbRating.getRating();
+        boolean isWatched = swWatched.isChecked();
+
+        //get the selected radio button text for approval rating
+        String approval = "";
+        int selectedRadioId = rgApproval.getCheckedRadioButtonId(); //method returns -1 if there is an empty selection
+        if (selectedRadioId != -1) {
+            RadioButton selectedRadio = findViewById(selectedRadioId);
+            approval = selectedRadio.getText().toString();
+        }
+
+        boolean isOnWatchlist = cbWatchlist.isChecked();
+        String poster = etPoster.getText().toString().trim();
+
+        //2. now we create the movie object using the extracted values
+        Movie movie = new Movie(title, releaseDate, genre, budget, duration, rating, isWatched, approval, isOnWatchlist, poster);
+
+        //3. send result back to main activity
         Intent intent = new Intent();
         intent.putExtra(MainActivity.MOVIE_EXTRA, movie);
-        if (position != -1)
-            intent.putExtra(MainActivity.POSITION_EXTRA, position);
+        intent.putExtra(MainActivity.POSITION_EXTRA, position);//pass position back: -1 for new, >= 0 for edit
+
         setResult(RESULT_OK, intent);
         finish();
     }
