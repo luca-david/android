@@ -1,5 +1,6 @@
 package ro.ase.ie.g1098.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,12 +14,13 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -28,22 +30,17 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import ro.ase.ie.g1098.R;
-import ro.ase.ie.g1098.adapter.IMovieListener;
-import ro.ase.ie.g1098.adapter.MovieAdapter;
 import ro.ase.ie.g1098.model.Movie;
 
-public class MainActivity extends AppCompatActivity implements IMovieListener {
+public class MainActivity extends AppCompatActivity {
 
     protected static final String POSITION_EXTRA = "position";
     protected static final String MOVIE_EXTRA = "movie";
     private FloatingActionButton fabInsert;
-    //private ListView listView;
-    private RecyclerView rvMovies;
+    private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
-    private final ArrayList<Movie> movies = new ArrayList<>();
-    //private ArrayAdapter<Movie> movieAdapter;
-    private MovieAdapter movieAdapter;
-
+    private final List<Movie> movies = new ArrayList<>();
+    private ArrayAdapter<Movie> movieArrayAdapter; //first make a variable at class scope
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +54,11 @@ public class MainActivity extends AppCompatActivity implements IMovieListener {
 
         addSampleMovies();
 
-        //movieAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, movies);
-        movieAdapter = new MovieAdapter(movies, this);
+        //an adapter should always have the context of the activity
+        movieArrayAdapter = new ArrayAdapter<>(MainActivity.this,
+                android.R.layout.simple_list_item_1,
+                movies);
+
         initControls();
         initListeners();
 
@@ -66,21 +66,27 @@ public class MainActivity extends AppCompatActivity implements IMovieListener {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult o) {
-                        if(o.getResultCode() == RESULT_OK)
+                        if(o.getResultCode() == RESULT_OK && o.getData() != null)
                         {
                             Intent intent = o.getData();
-                            Movie movie = (Movie) intent.getSerializableExtra(MOVIE_EXTRA);
+                            Movie movie = IntentCompat.getSerializableExtra(intent, MOVIE_EXTRA, Movie.class);
                             int position = intent.getIntExtra(POSITION_EXTRA, -1);
-                            if(position == -1)
-                            {
-                                movies.add(movie);
-                                movieAdapter.notifyDataSetChanged();
+
+                            if (movie != null) {
+                                if (position == -1) {
+                                    // we have a new movie
+                                    movies.add(movie);
+                                }
+                                else {
+                                    // we edited an existing movie
+                                    movies.set(position, movie);
+                                }
+
+                                //tell the array adapter to refresh the listview
+                                movieArrayAdapter.notifyDataSetChanged();
                             }
-                            else
-                            {
-                                movies.set(position, movie);
-                                movieAdapter.notifyDataSetChanged();
-                            }
+
+                            Toast.makeText(MainActivity.this, "Successfully updated the movie list", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -94,15 +100,78 @@ public class MainActivity extends AppCompatActivity implements IMovieListener {
                 launcher.launch(intent);
             }
         });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ItemActivity.class);
+                intent.putExtra(MOVIE_EXTRA, movies.get(position));
+                intent.putExtra(POSITION_EXTRA, position);//pass position so edit knows which item to replace
+                launcher.launch(intent);
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //intent is not needed since we don't need to pass data to ItemActivity
+                //Intent intent = new Intent(MainActivity.this, ItemActivity.class);
+                AlertDialog.Builder alertBox = new AlertDialog.Builder(MainActivity.this);
+                alertBox.setMessage("What operation to perform on this movie?");
+
+                alertBox.setPositiveButton("Duplicate", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //avoid shallow copy, instantiate a new movie object
+                        Movie original = movies.get(position);
+                        Movie duplicate = new Movie(
+                                original.getTitle(),
+                                original.getRelease(),
+                                original.getGenre(),
+                                original.getBudget(),
+                                original.getDuration(),
+                                original.getRating(),
+                                original.isWatched(),
+                                original.getApproval(),
+                                original.isOnWatchlist(),
+                                original.getPosterUrl()
+                        );
+
+                        //add the duplicate
+                        movies.add(movies.size(), duplicate);
+
+                        //never forget to update array adapter when making changes to the list
+                        movieArrayAdapter.notifyDataSetChanged();
+
+                        Toast.makeText(MainActivity.this, "Movie duplicated successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                //new DialogInterface needs to be instantiated and then create anon function to handle the implementation and logic of the method
+                alertBox.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //this is where we should implement the logic for deleting
+                        movies.remove(position);
+                        //ALWAYS call notifyDataSetChanged() to update the listview
+                        movieArrayAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainActivity.this, "Movie deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alertBox.setNeutralButton("Cancel", null);
+
+                alertBox.show();
+                return true;
+            }
+        });
     }
 
     private void initControls() {
         fabInsert = findViewById(R.id.floatingActionButton);
-        //listView = findViewById(R.id.listView);
-        //listView.setAdapter(movieAdapter);
-        rvMovies = findViewById(R.id.recyclerView);
-        rvMovies.setLayoutManager(new LinearLayoutManager(this));
-        rvMovies.setAdapter(movieAdapter);
+        listView = findViewById(R.id.listView);
+        //add setAdapter to init controls
+        listView.setAdapter(movieArrayAdapter);
     }
 
     private void addSampleMovies() {
@@ -141,15 +210,5 @@ public class MainActivity extends AppCompatActivity implements IMovieListener {
                 "R",
                 true,
                 "https://example.com/posters/the-matrix.jpg"));
-    }
-
-    @Override
-    public void onMovieClick(Movie movie, int position) {
-        Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-        intent.putExtra(MOVIE_EXTRA, movies.get(position));
-        intent.putExtra(POSITION_EXTRA, position);
-        launcher.launch(intent);
-
-        //complete with all the data
     }
 }
