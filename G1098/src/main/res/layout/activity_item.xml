@@ -283,6 +283,13 @@
                     android:progressBackgroundTint="?attr/colorOutlineVariant"
                     tools:rating="3.5" />
 
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbFavorited"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Favorited" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -331,6 +338,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Watchlist" />
+
                 </LinearLayout>
 
                 <View
@@ -392,6 +400,7 @@
                             android:text="NC-17" />
                     </RadioGroup>
                 </HorizontalScrollView>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

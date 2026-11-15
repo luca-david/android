@@ -15,6 +15,30 @@ public class Movie implements Serializable {
     private boolean onWatchlist; //Checkbox
     private String posterUrl;
 
+    public Movie(String title, Date release, String genre, double budget, int duration, float rating, boolean watched, String approval, boolean onWatchlist, String posterUrl, boolean favorited) {
+        this.title = title;
+        this.release = release;
+        this.genre = genre;
+        this.budget = budget;
+        this.duration = duration;
+        this.rating = rating;
+        this.watched = watched;
+        this.approval = approval;
+        this.onWatchlist = onWatchlist;
+        this.posterUrl = posterUrl;
+        this.favorited = favorited;
+    }
+
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    private boolean favorited; //Switch(MaterialSwitch to be exact)
+
     public Movie(String title, Date release, String genre, double budget, int duration, float rating, boolean watched, String approval, boolean onWatchlist, String posterUrl) {
         this.title = title;
         this.release = release;
@@ -41,6 +65,7 @@ public class Movie implements Serializable {
                 ", approval='" + approval + '\'' +
                 ", onWatchlist=" + onWatchlist +
                 ", posterUrl='" + posterUrl + '\'' +
+                ", favorited='" + favorited + '\'' +
                 '}';
     }
 

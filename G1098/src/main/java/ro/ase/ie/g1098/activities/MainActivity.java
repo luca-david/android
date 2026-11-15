@@ -3,6 +3,7 @@ package ro.ase.ie.g1098.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         fabInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Toast.makeText(MainActivity.this, "you pressed the " + " + " + "button", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.listView), "you pressed plus button", Snackbar.LENGTH_SHORT).show();
+                //Log.d("some tag", "pressed plus button");
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
                 launcher.launch(intent);
             }
