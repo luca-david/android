@@ -33,35 +33,43 @@ import java.util.Date;
 import java.util.Locale;
 
 import ro.ase.ie.g1098.R;
+import ro.ase.ie.g1098.databinding.ActivityItemBinding;
 import ro.ase.ie.g1098.model.Movie;
 
 public class ItemActivity extends AppCompatActivity {
 
-    private EditText etTitle;
-    private EditText etRelease;
-    private Spinner spGenre;
-    private EditText etBudget;
-    private SeekBar sbDuration;
-    private RatingBar rbRating;
-    private RadioGroup rgApproval;
-    private CheckBox cbonWatchList;
-    private MaterialSwitch swWatched;
-    private EditText etPoster;
-    private Button btMovieAction;
-    private TextView tvDurationValue;
-    private TextView tvWatchedValue;
+//    private EditText etTitle;
+//    private EditText etRelease;
+//    private Spinner spGenre;
+//    private EditText etBudget;
+//    private SeekBar sbDuration;
+//    private RatingBar rbRating;
+//    private RadioGroup rgApproval;
+//    private CheckBox cbonWatchList;
+//    private MaterialSwitch swWatched;
+//    private EditText etPoster;
+//    private Button btMovieAction;
+//    private TextView tvDurationValue;
+//    private TextView tvWatchedValue;
 
     private int position = -1;   // -1 = insert mode
     private Calendar releaseCal = Calendar.getInstance();
     private final SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
+    ActivityItemBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_item);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        //setContentView(R.layout.activity_item);
+        binding = ActivityItemBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -76,78 +84,82 @@ public class ItemActivity extends AppCompatActivity {
             position = intent.getIntExtra(MainActivity.POSITION_EXTRA, -1);
             fillForm(existing);
             setTitle("Edit movie");
-            btMovieAction.setText("Update Movie");
+            binding.btnMovieAction.setText("Update Movie");
         }
     }
 
     private void fillForm(Movie existing) {
-        etTitle.setText(existing.getTitle());
-        etRelease.setText(dateFormat.format(existing.getRelease()));
-        etBudget.setText(String.valueOf(existing.getBudget()));
-        sbDuration.setProgress(existing.getDuration());
-        cbonWatchList.setChecked(existing.isOnWatchlist());
-        swWatched.setChecked(existing.isWatched());
-        rbRating.setRating(existing.getRating());
-        etPoster.setText(existing.getPosterUrl());
-        for(int index=0; index<spGenre.getCount(); index++)
+        binding.etTitle.setText(existing.getTitle());
+        binding.etRelease.setText(dateFormat.format(existing.getRelease()));
+        binding.etBudget.setText(String.valueOf(existing.getBudget()));
+        binding.sbDuration.setProgress(existing.getDuration());
+        binding.cbOnWatchList.setChecked(existing.isOnWatchlist());
+        binding.swWatched.setChecked(existing.isWatched());
+        binding.rbRating.setRating(existing.getRating());
+        binding.etPoster.setText(existing.getPosterUrl());
+        for(int index=0; index<binding.spGenre.getCount(); index++)
         {
-            if(spGenre.getItemAtPosition(index).equals(existing.getGenre()))
+            if(binding.spGenre.getItemAtPosition(index).equals(existing.getGenre()))
             {
-                spGenre.setSelection(index);
+                binding.spGenre.setSelection(index);
                 break;
             }
         }
-        for(int index=0; index<rgApproval.getChildCount(); index++)
+        for(int index=0; index<binding.rgApproval.getChildCount(); index++)
         {
-            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
+            RadioButton rb = (RadioButton) binding.rgApproval.getChildAt(index);
             if(rb.getText().toString().equals(existing.getApproval()))
             {
-                rgApproval.check(rgApproval.getChildAt(index).getId());
+                binding.rgApproval.check(binding.rgApproval.getChildAt(index).getId());
                 break;
             }
         }
     }
 
     private void initControls() {
+        //1. this is for findViewById, the default binding for variables
+//        etTitle = findViewById(R.id.etTitle);
+//        etRelease = findViewById(R.id.etRelease);
+//        spGenre = findViewById(R.id.spGenre);
+//        etBudget = findViewById(R.id.etBudget);
+//        sbDuration = findViewById(R.id.sbDuration);
+//        rbRating = findViewById(R.id.rbRating);
+//        rgApproval = findViewById(R.id.rgApproval);
+//        cbonWatchList = findViewById(R.id.cbOnWatchList);
+//        swWatched = findViewById(R.id.swWatched);
+//        etPoster = findViewById(R.id.etPoster);
+//        btMovieAction = findViewById(R.id.btnMovieAction);
+//        tvDurationValue = findViewById(R.id.tvDurationValue);
+//        tvWatchedValue = findViewById(R.id.tvWatchedValue);
 
-        etTitle = findViewById(R.id.etTitle);
-        etRelease = findViewById(R.id.etRelease);
-        spGenre = findViewById(R.id.spGenre);
-        etBudget = findViewById(R.id.etBudget);
-        sbDuration = findViewById(R.id.sbDuration);
-        rbRating = findViewById(R.id.rbRating);
-        rgApproval = findViewById(R.id.rgApproval);
-        cbonWatchList = findViewById(R.id.cbOnWatchList);
-        swWatched = findViewById(R.id.swWatched);
-        etPoster = findViewById(R.id.etPoster);
-        btMovieAction = findViewById(R.id.btnMovieAction);
-        tvDurationValue = findViewById(R.id.tvDurationValue);
-        tvWatchedValue = findViewById(R.id.tvWatchedValue);
+        //2. view binding
+        //we created the ActivityItemBinding and replaced all variables with binding obj
+
     }
 
     private void initListeners() {
-        etRelease.setOnClickListener(new View.OnClickListener() {
+        binding.etRelease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showReleaseDatePicker();
             }
         });
-        btMovieAction.setOnClickListener(new View.OnClickListener() {
+        binding.btnMovieAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveMovie();
             }
         });
-        swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-                tvWatchedValue.setText(isChecked ? "Yes" : "No");
+                binding.tvWatchedValue.setText(isChecked ? "Yes" : "No");
             }
         });
-        sbDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.sbDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tvDurationValue.setText(progress + " min.");
+                binding.tvDurationValue.setText(progress + " min.");
             }
 
             @Override
@@ -164,18 +176,18 @@ public class ItemActivity extends AppCompatActivity {
 
     private void saveMovie() {
         Movie movie = new Movie();
-        movie.setTitle(etTitle.getText().toString());
+        movie.setTitle(binding.etTitle.getText().toString());
         movie.setRelease(releaseCal.getTime());
-        movie.setGenre(spGenre.getSelectedItem().toString());
-        movie.setBudget(Double.parseDouble(etBudget.getText().toString()));
-        movie.setDuration(sbDuration.getProgress());
-        movie.setRating(rbRating.getRating());
-        movie.setWatched(swWatched.isChecked());
-        movie.setOnWatchlist(cbonWatchList.isChecked());
-        movie.setPosterUrl(etPoster.getText().toString());
-        for(int index=0; index<rgApproval.getChildCount(); index++)
+        movie.setGenre(binding.spGenre.getSelectedItem().toString());
+        movie.setBudget(Double.parseDouble(binding.etBudget.getText().toString()));
+        movie.setDuration(binding.sbDuration.getProgress());
+        movie.setRating(binding.rbRating.getRating());
+        movie.setWatched(binding.swWatched.isChecked());
+        movie.setOnWatchlist(binding.cbOnWatchList.isChecked());
+        movie.setPosterUrl(binding.etPoster.getText().toString());
+        for(int index=0; index<binding.rgApproval.getChildCount(); index++)
         {
-            RadioButton rb = (RadioButton) rgApproval.getChildAt(index);
+            RadioButton rb = (RadioButton) binding.rgApproval.getChildAt(index);
             if(rb.isChecked())
             {
                 movie.setApproval(rb.getText().toString());
@@ -191,7 +203,7 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     private void showReleaseDatePicker() {
-        String current = etRelease.getText().toString();
+        String current = binding.etRelease.getText().toString();
         if (!current.isEmpty()) {
             try {
                 Date parsed = dateFormat.parse(current);
@@ -206,8 +218,8 @@ public class ItemActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         releaseCal.set(year, month, day);
-                        etRelease.setError(null);
-                        etRelease.setText(dateFormat.format(releaseCal.getTime()));
+                        binding.etRelease.setError(null);
+                        binding.etRelease.setText(dateFormat.format(releaseCal.getTime()));
                     }
                 },
                 releaseCal.get(Calendar.YEAR),

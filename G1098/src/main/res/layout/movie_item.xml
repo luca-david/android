@@ -131,6 +131,15 @@
                     app:chipMinHeight="28dp"
                     app:ensureMinTouchTargetSize="false" />
             </com.google.android.material.chip.ChipGroup>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete" />
+
         </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

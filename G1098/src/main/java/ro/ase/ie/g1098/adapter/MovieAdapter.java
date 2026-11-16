@@ -3,6 +3,7 @@ package ro.ase.ie.g1098.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /** Optional callbacks so the activity can react to taps. */
     public interface OnMovieListener {
         void onMovieClick(Movie movie, int position);
+        void onMovieLongClick(Movie movie, int position);
+        void onMovieDeleteClick(Movie movie, int position);
     }
 
     private final List<Movie> movies;
@@ -57,6 +60,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         h.rating.setRating(m.getRating());
         h.ratingValue.setText(String.format(Locale.US, "%.1f", m.getRating()));
         h.facts.setText(m.getDuration() + " min  · " + formatBudget(m.getBudget()));
+
+        h.chipWatched.setVisibility(m.isWatched() ? View.VISIBLE : View.GONE);
+        h.chipWatchlist.setVisibility(m.isOnWatchlist() ? View.VISIBLE : View.GONE);
+
+        h.chipApproval.setText(m.getApproval());
     }
 
     @Override
@@ -82,6 +90,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         final Chip chipApproval;
         final Chip chipWatched;
         final Chip chipWatchlist;
+        final Button btnDelete;
 
         MovieViewHolder(@NonNull View v) {
             super(v);
@@ -94,11 +103,28 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             chipApproval = v.findViewById(R.id.chipApproval);
             chipWatched  = v.findViewById(R.id.chipWatched);
             chipWatchlist= v.findViewById(R.id.chipWatchlist);
+            btnDelete = v.findViewById(R.id.btnDelete);
 
             v.setOnClickListener(click -> {
                 int pos = getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && listener != null) {
                     listener.onMovieClick(movies.get(pos), pos);
+                }
+            });
+
+            v.setOnLongClickListener(click -> {
+                int pos = getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onMovieLongClick(movies.get(pos), pos);
+                    return true;
+                }
+                return false;
+            });
+
+            btnDelete.setOnClickListener(click -> {
+                int pos = getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onMovieLongClick(movies.get(pos), pos);
                 }
             });
         }

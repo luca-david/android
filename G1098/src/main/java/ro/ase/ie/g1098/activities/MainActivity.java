@@ -1,8 +1,11 @@
 package ro.ase.ie.g1098.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
 
             }
         });*/
+
     }
 
     private void initControls() {
@@ -148,5 +152,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         intent.putExtra(MOVIE_EXTRA, movies.get(position));
         intent.putExtra(POSITION_EXTRA, position);
         launcher.launch(intent);
+    }
+
+    @Override
+    public void onMovieLongClick(Movie movie, int position) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        alert.setMessage("Are you sure you want to delete " + movie.getTitle() + " ?");
+        alert.setPositiveButton("Yes", (dialog, which) -> {
+            movies.remove(position);
+            movieAdapter.notifyDataSetChanged();
+        }).setNegativeButton("No", null)
+                .show();
+    }
+
+    @Override
+    public void onMovieDeleteClick(Movie movie, int position) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        alert.setMessage("Are you sure you want to delete " + movie.getTitle() + " ?");
+        alert.setPositiveButton("Yes", (dialog, which) -> {
+                    movies.remove(position);
+                    movieAdapter.notifyDataSetChanged();
+                }).setNegativeButton("No", null)
+        .show();
     }
 }
