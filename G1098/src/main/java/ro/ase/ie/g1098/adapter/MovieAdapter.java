@@ -13,39 +13,50 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import ro.ase.ie.g1098.R;
 import ro.ase.ie.g1098.model.Movie;
 
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
+    /** Optional callbacks so the activity can react to taps. */
+    public interface OnMovieListener {
+        void onMovieClick(Movie movie, int position);
+    }
 
-    private final ArrayList<Movie> movies;
+    private final List<Movie> movies;
+    private final OnMovieListener listener;   // may be null
 
-    private final IMovieListener listener;
+    private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy", Locale.US);
 
-    public MovieAdapter(ArrayList<Movie> movies, IMovieListener listener) {
+    public MovieAdapter(List<Movie> movies, OnMovieListener listener) {
         this.movies = movies;
         this.listener = listener;
-
     }
 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item, parent, false);
-        return new MovieViewHolder(view); //calls the constructor for MovieViewHolder
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.movie_item, parent, false);
+        return new MovieViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        //take data from movie and put in the fields
+    public void onBindViewHolder(@NonNull MovieViewHolder h, int position) {
+        Movie m = movies.get(position);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-        Movie movie = movies.get(position);
-        holder.title.setText(movie.getTitle());
-        holder.subtitle.setText(movie.getGenre().toString() + " . " + movie.getRelease().getYear());
+        // --- text ---
+        h.title.setText(m.getTitle());
+
+        String year = (m.getRelease() != null) ? YEAR.format(m.getRelease()) : "—";
+        h.subtitle.setText(m.getGenre() + " · " + year);
+        h.rating.setRating(m.getRating());
+        h.ratingValue.setText(String.format(Locale.US, "%.1f", m.getRating()));
+        h.facts.setText(m.getDuration() + " min  · " + formatBudget(m.getBudget()));
     }
 
     @Override
@@ -53,8 +64,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movies.size();
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
-        //holds down all the views together
+    // ---- helpers ----
+
+    private String formatBudget(double budget) {
+        if (budget >= 1_000_000)   return String.format(Locale.US, "$%.0fM", budget / 1_000_000);
+        if (budget >= 1_000)       return String.format(Locale.US, "$%.0fK", budget / 1_000);
+        return String.format(Locale.US, "$%.0f", budget);
+    }
+
+    class MovieViewHolder extends RecyclerView.ViewHolder {
         final ImageView poster;
         final TextView title;
         final TextView subtitle;
@@ -63,31 +81,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         final TextView facts;
         final Chip chipApproval;
         final Chip chipWatched;
-        final Chip chipWatchList;
-        public MovieViewHolder(@NonNull View itemView) {
-            super(itemView);
-            poster = itemView.findViewById(R.id.moviePoster);
-            title = itemView.findViewById(R.id.movieTitle);
-            subtitle = itemView.findViewById(R.id.movieSubtitle);
-            rating = itemView.findViewById(R.id.movieRating);
-            ratingValue = itemView.findViewById(R.id.movieRatingValue);
-            facts = itemView.findViewById(R.id.movieFacts);
-            chipApproval = itemView.findViewById(R.id.chipApproval);
-            chipWatched = itemView.findViewById(R.id.chipWatched);
-            chipWatchList = itemView.findViewById(R.id.chipWatchlist);
+        final Chip chipWatchlist;
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = getAbsoluteAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        Movie movie = movies.get(pos);
-                        listener.onMovieClick(movie, pos);
-                    }
+        MovieViewHolder(@NonNull View v) {
+            super(v);
+            poster       = v.findViewById(R.id.moviePoster);
+            title        = v.findViewById(R.id.movieTitle);
+            subtitle     = v.findViewById(R.id.movieSubtitle);
+            rating       = v.findViewById(R.id.movieRating);
+            ratingValue  = v.findViewById(R.id.movieRatingValue);
+            facts        = v.findViewById(R.id.movieFacts);
+            chipApproval = v.findViewById(R.id.chipApproval);
+            chipWatched  = v.findViewById(R.id.chipWatched);
+            chipWatchlist= v.findViewById(R.id.chipWatchlist);
+
+            v.setOnClickListener(click -> {
+                int pos = getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onMovieClick(movies.get(pos), pos);
                 }
             });
-
         }
-
     }
 }
