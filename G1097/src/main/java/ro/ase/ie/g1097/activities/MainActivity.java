@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
     private RecyclerView recyclerView;
     private ActivityResultLauncher<Intent> launcher;
     private final List<Movie> movies = new ArrayList<>();
-//    private ArrayAdapter<Movie> movieAdapter;
+    //    private ArrayAdapter<Movie> movieAdapter;
     private MovieAdapter movieAdapter;
 
     @Override
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 "Action",
                 63000000,
                 136,
-                5f,
+                0f,          // not watched yet → not rated
                 false,
                 "R",
                 true,
@@ -258,17 +258,3 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 .show();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

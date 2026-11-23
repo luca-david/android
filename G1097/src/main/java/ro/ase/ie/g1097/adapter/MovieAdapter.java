@@ -1,8 +1,6 @@
 package ro.ase.ie.g1097.adapter;   // <-- change to your package
 
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,22 +58,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         String year = (m.getRelease() != null) ? YEAR.format(m.getRelease()) : "—";
         h.subtitle.setText(m.getGenre() + " · " + year);
-        h.rating.setRating(m.getRating());
-        h.ratingValue.setText(String.format(Locale.US, "%.1f", m.getRating()));
+        bindRating(h, m.getRating());
         h.facts.setText(m.getDuration() + " min  · " + formatBudget(m.getBudget()));
 
         // --- chips ---
         bindApprovalChip(h.chipApproval, m.getApproval());
         h.chipWatched.setVisibility(m.isWatched() ? View.VISIBLE : View.GONE);
         h.chipWatchlist.setVisibility(m.isOnWatchlist() ? View.VISIBLE : View.GONE);
-
-        Glide.with(h.poster)
-                .load(m.getPoster())                                  // null or empty → shows the fallback
-                .placeholder(android.R.drawable.ic_menu_gallery)      // while downloading
-                .error(android.R.drawable.ic_menu_report_image)       // bad URL / no internet
-                .fallback(android.R.drawable.ic_menu_gallery)         // poster is null
-                .centerCrop()
-                .into(h.poster);
     }
 
     @Override
@@ -84,6 +73,45 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     // ---- helpers ----
+
+    // Rating colors
+    private static final int RATING_GREEN = Color.parseColor("#2E7D32");
+    private static final int RATING_RED   = Color.parseColor("#C62828");
+    private static final int RATING_GREY  = Color.parseColor("#757575");
+
+    /**
+     * Stars and label share one color:
+     *   0          → "Not rated" (grey)
+     *   above 4    → "Excellent" (green)
+     *   below 2    → "Poor"      (red)
+     *   otherwise  → "Average"   (grey)
+     */
+    private void bindRating(MovieViewHolder h, float rating) {
+        String label;
+        int color;
+        if (rating == 0f) {
+            label = "Not rated";
+            color = RATING_GREY;
+        } else if (rating > 4f) {
+            label = "Excellent";
+            color = RATING_GREEN;
+        } else if (rating < 2f) {
+            label = "Poor";
+            color = RATING_RED;
+        } else {
+            label = "Average";
+            color = RATING_GREY;
+        }
+
+        h.rating.setRating(rating);
+        h.rating.setProgressTintList(ColorStateList.valueOf(color));            // filled stars
+        h.rating.setSecondaryProgressTintList(ColorStateList.valueOf(color));   // half stars
+
+        h.ratingValue.setText(rating == 0f
+                ? label
+                : String.format(Locale.US, "%.1f · %s", rating, label));     // e.g. "4.5 · Excellent"
+        h.ratingValue.setTextColor(color);
+    }
 
     // Approval colors: light background + dark text of the same hue, so the label stays readable
     private static final int GREEN_BG  = Color.parseColor("#C8E6C9"), GREEN_FG  = Color.parseColor("#1B5E20");

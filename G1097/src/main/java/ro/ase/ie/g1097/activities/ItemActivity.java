@@ -2,7 +2,6 @@ package ro.ase.ie.g1097.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -66,6 +65,7 @@ public class ItemActivity extends AppCompatActivity {
     private Button btMovieAction;
     private TextView tvDurationValue;
     private TextView tvWatchedValue;
+    private TextView tvRatingHint;
 
     private int position = -1;   // -1 = insert mode
     private final Calendar releaseCal = Calendar.getInstance();
@@ -91,6 +91,7 @@ public class ItemActivity extends AppCompatActivity {
 
         initControls();
         initListeners();
+        applyWatchedState(swWatched.isChecked());   // new movie: switch is off → rating locked
 
         Intent intent = getIntent();
         Movie existing = IntentCompat.getSerializableExtra(intent, MainActivity.MOVIE_EXTRA, Movie.class);
@@ -113,6 +114,7 @@ public class ItemActivity extends AppCompatActivity {
         cbonWatchList.setChecked(existing.isOnWatchlist());
         swWatched.setChecked(existing.isWatched());
         rbRating.setRating(existing.getRating());
+        applyWatchedState(existing.isWatched());   // an unwatched movie's old rating is cleared
         etPoster.setText(existing.getPoster() != null ? existing.getPoster() : "");
         for (int index = 0; index < spGenre.getCount(); index++) {
             if (spGenre.getItemAtPosition(index).equals(existing.getGenre())) {
@@ -143,6 +145,20 @@ public class ItemActivity extends AppCompatActivity {
         btMovieAction = findViewById(R.id.btnMovieAction);
         tvDurationValue = findViewById(R.id.tvDurationValue);
         tvWatchedValue = findViewById(R.id.tvWatchedValue);
+        tvRatingHint = findViewById(R.id.tvRatingHint);
+    }
+
+    /** Rating is only allowed for watched movies: off → bar disabled, reset to 0, hint shown. */
+    private void applyWatchedState(boolean watched) {
+        rbRating.setEnabled(watched);
+        rbRating.setAlpha(watched ? 1f : 0.4f);   // a disabled RatingBar looks the same, so dim it
+        if (!watched) {
+            rbRating.setRating(0f);
+        } else {
+            cbonWatchList.setChecked(false);   // a watched movie leaves the watchlist
+        }
+        tvRatingHint.setVisibility(watched ? View.GONE : View.VISIBLE);
+        tvWatchedValue.setText(watched ? "Yes" : "No");
     }
 
     private void initListeners() {
@@ -161,7 +177,7 @@ public class ItemActivity extends AppCompatActivity {
         swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-                tvWatchedValue.setText(isChecked ? "Yes" : "No");
+                applyWatchedState(isChecked);
                 swWatched.setError(null);
                 cbonWatchList.setError(null);
             }

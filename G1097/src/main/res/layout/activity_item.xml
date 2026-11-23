@@ -283,6 +283,16 @@
                     android:progressBackgroundTint="?attr/colorOutlineVariant"
                     tools:rating="3.5" />
 
+                <!-- Shown while "watched" is off and the rating bar is disabled -->
+                <TextView
+                    android:id="@+id/tvRatingHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Rate it after watching."
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
