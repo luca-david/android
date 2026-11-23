@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import kotlin.NotImplementedError;
 import ro.ase.ie.g1097.model.Movie;
 
 /**
@@ -63,13 +64,13 @@ public class NetworkService {
 
     /** Reads the whole response body as text. Runs on the background thread. */
     private String downloadText(String address) throws IOException {
-
+        throw new NotImplementedError();
     }
 
     // ---------- JSON ----------
 
     /** Turns the JSON array into Movie objects. The keys match the Movie fields. */
     private List<Movie> parseMovies(String json) throws JSONException, ParseException {
-
+        throw new NotImplementedError();
     }
 }
