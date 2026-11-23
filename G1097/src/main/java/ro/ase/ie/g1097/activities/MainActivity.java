@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                                 movieAdapter.notifyDataSetChanged();
                             }
                         }
+                        else
+                            Toast.makeText(MainActivity.this, "Action was cancelled by the user!", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 true,
                 "PG-13",
                 false,
-                "https://example.com/posters/inception.jpg"));
+                "https://cdng.europosters.eu/pod_public/1300/263129.jpg"));
 
         movies.add(new Movie(
                 "Toy Story",
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 true,
                 "G",
                 false,
-                "https://example.com/posters/toy-story.jpg"));
+                "https://cdn.posteritati.com/posters/000/000/057/815/toy-story-4-md-web.jpg"));
 
         movies.add(new Movie(
                 "The Matrix",
@@ -150,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                 false,
                 "R",
                 true,
-                "https://example.com/posters/the-matrix.jpg"));
+                "https://render.fineartamerica.com/images/rendered/default/poster/6/8/break/images/artworkimages/medium/3/the-matrix-bo-kev.jpg"));
     }
 
     @Override

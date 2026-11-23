@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
@@ -62,6 +63,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         h.rating.setRating(m.getRating());
         h.ratingValue.setText(String.format(Locale.US, "%.1f", m.getRating()));
         h.facts.setText(m.getDuration() + " min  · " + formatBudget(m.getBudget()));
+
+        // --- chips ---
+        bindApprovalChip(h.chipApproval, m.getApproval());
+        h.chipWatched.setVisibility(m.isWatched() ? View.VISIBLE : View.GONE);
+        h.chipWatchlist.setVisibility(m.isOnWatchlist() ? View.VISIBLE : View.GONE);
+
+        Glide.with(h.poster)
+                .load(m.getPoster())                                  // null or empty → shows the fallback
+                .placeholder(android.R.drawable.ic_menu_gallery)      // while downloading
+                .error(android.R.drawable.ic_menu_report_image)       // bad URL / no internet
+                .fallback(android.R.drawable.ic_menu_gallery)         // poster is null
+                .centerCrop()
+                .into(h.poster);
     }
 
     @Override
@@ -70,6 +84,38 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     // ---- helpers ----
+
+    // Approval colors: light background + dark text of the same hue, so the label stays readable
+    private static final int GREEN_BG  = Color.parseColor("#C8E6C9"), GREEN_FG  = Color.parseColor("#1B5E20");
+    private static final int ORANGE_BG = Color.parseColor("#FFE0B2"), ORANGE_FG = Color.parseColor("#E65100");
+    private static final int RED_BG    = Color.parseColor("#FFCDD2"), RED_FG    = Color.parseColor("#B71C1C");
+
+    /** G / PG → green, PG-13 → orange, R / NC-17 → red; hidden when the movie has no approval. */
+    private void bindApprovalChip(Chip chip, String approval) {
+        if (approval == null || approval.trim().isEmpty()) {
+            chip.setVisibility(View.GONE);
+            return;
+        }
+        chip.setVisibility(View.VISIBLE);
+        chip.setText(approval);
+
+        int bg, fg;
+        switch (approval.trim().toUpperCase(Locale.ROOT)) {
+            case "G":
+            case "PG":
+                bg = GREEN_BG;  fg = GREEN_FG;  break;
+            case "PG-13":
+                bg = ORANGE_BG; fg = ORANGE_FG; break;
+            case "R":
+            case "NC-17":
+                bg = RED_BG;    fg = RED_FG;    break;
+            default:            // unknown value: neutral grey
+                bg = Color.parseColor("#EEEEEE"); fg = Color.parseColor("#424242");
+        }
+        chip.setChipBackgroundColor(ColorStateList.valueOf(bg));
+        chip.setChipStrokeColor(ColorStateList.valueOf(fg));
+        chip.setTextColor(fg);
+    }
 
     private String formatBudget(double budget) {
         if (budget >= 1_000_000)   return String.format(Locale.US, "$%.0fM", budget / 1_000_000);
