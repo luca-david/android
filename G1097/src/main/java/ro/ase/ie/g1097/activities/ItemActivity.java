@@ -51,7 +51,7 @@ public class ItemActivity extends AppCompatActivity {
     private static final double BUDGET_MAX = 1_000_000_000d;
     private static final int DURATION_MIN = 1;               // minutes
     // Set to true if the first entry of @array/movie_genre is a hint such as "Select genre"
-    private static final boolean GENRE_HAS_PLACEHOLDER = false;
+    private static final boolean GENRE_HAS_PLACEHOLDER = true;
 
     private EditText etTitle;
     private EditText etRelease;
