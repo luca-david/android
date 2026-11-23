@@ -9,7 +9,7 @@
     "watched": true,
     "approval": "PG",
     "onWatchlist": false,
-    "poster": "https://picsum.photos/seed/spiritedaway/300/450"
+    "poster": "https://www.hastingsindependentpress.co.uk/wp-content/uploads/2018/09/FEAT-spiritedawayCOVER.jpg"
   },
   {
     "title": "Oppenheimer",
@@ -21,7 +21,7 @@
     "watched": true,
     "approval": "R",
     "onWatchlist": false,
-    "poster": "https://picsum.photos/seed/oppenheimer/300/450"
+    "poster": "https://static.cinemagia.ro/img/resize/db/movie/31/01/699/oppenheimer-134543l-0x400-h-01641b6e.jpg"
   },
   {
     "title": "Dune: Part Two",
@@ -33,6 +33,6 @@
     "watched": false,
     "approval": "PG-13",
     "onWatchlist": true,
-    "poster": "https://picsum.photos/seed/duneparttwo/300/450"
+    "poster": "https://deadline.com/wp-content/uploads/2024/02/Dune-Part-Two-Dolby-Poster.jpg"
   }
 ]
