@@ -26,6 +26,7 @@ import java.util.List;
 import ro.ase.ie.g1098.R;
 import ro.ase.ie.g1098.adapter.MovieAdapter;
 import ro.ase.ie.g1098.model.Movie;
+import ro.ase.ie.g1098.network.NetworkService;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMovieListener {
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
     private final List<Movie> movies = new ArrayList<>();
     //    private ArrayAdapter<Movie> movieAdapter;
     private MovieAdapter movieAdapter;
+    private final NetworkService networkService = new NetworkService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        networkService.shutdown();   // stop a running download
+        super.onDestroy();
     }
 
     private void initListeners() {
