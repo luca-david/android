@@ -119,11 +119,11 @@ public class Movie implements Serializable {
         this.onWatchlist = onWatchlist;
     }
 
-    public String getPosterUrl() {
+    public String getPoster() {
         return posterUrl;
     }
 
-    public void setPosterUrl(String posterUrl) {
+    public void setPoster(String posterUrl) {
         this.posterUrl = posterUrl;
     }
 }
