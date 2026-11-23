@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Spirited Away",
+    "release": "2001-07-20",
+    "genre": "Animation",
+    "budget": 19000000,
+    "duration": 125,
+    "rating": 4.5,
+    "watched": true,
+    "approval": "PG",
+    "onWatchlist": false,
+    "poster": "https://picsum.photos/seed/spiritedaway/300/450"
+  },
+  {
+    "title": "Oppenheimer",
+    "release": "2023-07-21",
+    "genre": "Drama",
+    "budget": 100000000,
+    "duration": 180,
+    "rating": 3.5,
+    "watched": true,
+    "approval": "R",
+    "onWatchlist": false,
+    "poster": "https://picsum.photos/seed/oppenheimer/300/450"
+  },
+  {
+    "title": "Dune: Part Two",
+    "release": "2024-03-01",
+    "genre": "Sci-Fi",
+    "budget": 190000000,
+    "duration": 166,
+    "rating": 0,
+    "watched": false,
+    "approval": "PG-13",
+    "onWatchlist": true,
+    "poster": "https://picsum.photos/seed/duneparttwo/300/450"
+  }
+]
