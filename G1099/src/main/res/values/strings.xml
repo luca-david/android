@@ -22,8 +22,8 @@
         <item>Item 19</item>
         <item>Item 20</item>
     </string-array>
-
     <string-array name="movie_genre">
+        <item>Select genre…</item>
         <item>Drama</item>
         <item>Action</item>
         <item>Comedy</item>
@@ -34,5 +34,6 @@
         <item>Adventure</item>
         <item>Fantasy</item>
         <item>Mystery</item>
+        <item>Animation</item>
     </string-array>
 </resources>
