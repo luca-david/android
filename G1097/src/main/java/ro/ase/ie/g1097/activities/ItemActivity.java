@@ -386,12 +386,6 @@ public class ItemActivity extends AppCompatActivity {
     private void showFirstError() {
         final View target = firstInvalidView;
         target.requestFocus();   // opens the error popup for focusable EditTexts
-        target.post(new Runnable() {
-            @Override
-            public void run() {
-                target.requestRectangleOnScreen(new Rect(0, 0, target.getWidth(), target.getHeight()));
-            }
-        });
         Snackbar.make(findViewById(R.id.main), firstErrorMessage, Snackbar.LENGTH_LONG).show();
     }
 
