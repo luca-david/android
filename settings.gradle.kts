@@ -33,4 +33,5 @@ include(":DMA05")
 include(":DMA06")
 include(":DMA07")
 include(":DMA08")
+include(":DMA09")
 

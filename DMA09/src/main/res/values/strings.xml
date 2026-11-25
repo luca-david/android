@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">DMA09 Storage</string>
+    <string name="tab_prefs">Preferences</string>
+    <string name="tab_files">Files</string>
+    <string name="tab_shared">Shared</string>
+
+    <!-- Preferences screen -->
+    <string name="user_name_hint">User name</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="save_apply">Save (apply)</string>
+    <string name="save_commit">Save (commit)</string>
+    <string name="open_settings">Settings screen</string>
+    <string name="show_xml">Show XML file</string>
+    <string name="save_bad_password">Save password (bad idea)</string>
+    <string name="reset_prefs">Reset preferences</string>
+    <string name="listener_waiting">Listener: waiting for a change…</string>
+
+    <!-- Files screen -->
+    <string name="note_hint">Write a note…</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_append">Append</string>
+    <string name="btn_read">Read</string>
+    <string name="btn_list">List</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_paths">Paths</string>
+    <string name="btn_cache_write">Write cache</string>
+    <string name="btn_cache_size">Cache size</string>
+    <string name="btn_cache_clear">Clear cache</string>
+    <string name="btn_ext_export">Export (external app folder)</string>
+
+    <!-- Shared screen -->
+    <string name="btn_create_doc">Export note (pick a place)</string>
+    <string name="btn_open_doc">Import note (pick a file)</string>
+    <string name="btn_raw">Read res/raw</string>
+    <string name="btn_assets">Read assets</string>
+    <string name="btn_share">Share note (FileProvider)</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="pref_cat_profile">Profile</string>
+    <string name="pref_cat_display">Display</string>
+    <string name="pref_user_name">User name</string>
+    <string name="pref_dark_mode">Dark mode</string>
+    <string name="pref_dark_mode_summary">Saved in the same file as the Preferences tab</string>
+    <string name="pref_sort">Sort notes by</string>
+</resources>

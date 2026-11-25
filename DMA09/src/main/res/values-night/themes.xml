@@ -1,0 +1,5 @@
+<resources>
+    <style name="Base.Theme.DMA09" parent="Theme.Material3.DayNight.NoActionBar" />
+
+    <style name="Theme.DMA09" parent="Base.Theme.DMA09" />
+</resources>

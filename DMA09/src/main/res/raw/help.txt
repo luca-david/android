@@ -1,0 +1,5 @@
+This text lives in res/raw/help.txt.
+It is packed inside the APK, read-only, and opened with
+getResources().openRawResource(R.raw.help).
+Resources are looked up by id (R.raw.help) and can be
+replaced per language, screen size or night mode.

@@ -1,0 +1,5 @@
+This text lives in assets/license.txt.
+It is packed inside the APK, read-only, and opened with
+getAssets().open("license.txt").
+Assets are looked up by file name, keep their folder structure
+and have no resource id and no qualifiers.

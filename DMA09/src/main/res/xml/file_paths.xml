@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the "shared" sub-folder of the cache directory can be shared.
+     Everything else stays private to the app. -->
+<paths>
+    <cache-path name="shared" path="shared/" />
+</paths>
